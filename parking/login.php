@@ -7,12 +7,12 @@ $error_msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $correo    = trim($_POST['correo'] ?? '');
-    $passInput = trim($_POST['contrasena'] ?? '');
+    $passInput = trim($_POST['password'] ?? '');
 
     if ($correo === '' || $passInput === '') {
         $error_msg = 'Por favor ingresa correo y contraseña.';
     } else {
-        $sql = "SELECT contrasena FROM usuarios WHERE correo = ?";
+        $sql = "SELECT password FROM usuarios WHERE correo = ?";
         if ($stmt = $conn->prepare($sql)) {
             $stmt->bind_param('s', $correo);
             if ($stmt->execute()) {
@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->bind_result($hash_db);
                     $stmt->fetch();
 
-                    // Genera el SHA-256 de la contraseña ingresada
                     $hash_input = hash('sha256', $passInput);
 
                     if ($debug) {
@@ -68,10 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div class="mb-3">
         <label for="contrasena" class="form-label">Contraseña</label>
-        <input type="password" name="contrasena" id="contrasena" class="form-control" required />
+        <input type="password" name="password" id="contrasena" class="form-control" required />
       </div>
       <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
     </form>
+
+    <div class="mt-3 text-center">
+        <p>¿No tienes cuenta?</p>
+        <a href="registro.php" class="btn btn-success">Registrarse</a>
+    </div>
 
     <?php if ($error_msg): ?>
       <div class="text-center mt-3 text-danger">
